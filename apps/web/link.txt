@@ -1,0 +1,1 @@
+https://iptnirdgmijlkdjherps.supabase.co/auth/v1/verify?token=d9a240cc94fc044df22972318364e9e88b0884c95e36bccbdf6d8908&type=invite&redirect_to=http://localhost:3000/auth/actualizar-clave

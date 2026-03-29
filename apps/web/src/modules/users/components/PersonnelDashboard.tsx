@@ -16,6 +16,7 @@ import {
   Plus
 } from 'lucide-react'
 import { Button } from '@/shared/components/Button'
+import { createClient } from '@/lib/supabase/client'
 
 interface Permisos {
   visualizacion: boolean
@@ -47,10 +48,14 @@ export function PersonnelDashboard({ onAddNew }: PersonnelDashboardProps) {
 
   const fetchUsers = async () => {
     try {
+      const supabase = createClient()
+      const { data: { user: currentUser } } = await supabase.auth.getUser()
+
       const response = await fetch('/api/users')
       const result = await response.json()
       if (result.success && Array.isArray(result.data)) {
-        setUsers(result.data)
+        const externalUsers = result.data.filter((u: any) => u.id !== currentUser?.id)
+        setUsers(externalUsers)
       }
     } catch (error) {
       console.error('Error fetching users:', error)

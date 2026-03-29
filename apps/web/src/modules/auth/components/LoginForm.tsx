@@ -41,7 +41,16 @@ export function LoginForm() {
       return
     }
 
-    router.push('/dashboard')
+    if (data.user) {
+      const role = data.user.user_metadata?.role as string
+      const operarios = ['fiscalizador', 'supervisor', 'contraloria']
+
+      if (operarios.includes(role?.toLowerCase())) {
+        router.push('/operaciones')
+      } else {
+        router.push('/dashboard')
+      }
+    }
   }
 
   return (

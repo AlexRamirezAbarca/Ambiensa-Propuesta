@@ -1,0 +1,24 @@
+{
+  "name": "Ambiensa Operaciones",
+  "short_name": "Ambiensa Op",
+  "description": "Herramienta de Operaciones y Fiscalización ERP Ambiensa",
+  "start_url": "/operaciones",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/window.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/globe.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

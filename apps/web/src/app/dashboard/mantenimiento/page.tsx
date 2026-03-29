@@ -5,6 +5,7 @@ import { PersonnelDashboard } from '@/modules/users/components/PersonnelDashboar
 import { CreateUserForm } from '@/modules/users/components/CreateUserForm'
 import { Users2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/shared/components/Button'
+import { createClient } from '@/lib/supabase/client'
 
 export default function MantenimientoPage() {
   const [view, setView] = useState<'loading' | 'dashboard' | 'form'>('loading')
@@ -13,11 +14,17 @@ export default function MantenimientoPage() {
   const checkUsers = async () => {
     setView('loading')
     try {
+      const supabase = createClient()
+      const { data: { user: currentUser } } = await supabase.auth.getUser()
+
       const response = await fetch('/api/users')
       const result = await response.json()
       
       if (result.success && Array.isArray(result.data)) {
-        const count = result.data.length
+        // Filtramos para excluir al administrador activo actual
+        const externalUsers = result.data.filter((u: any) => u.id !== currentUser?.id)
+        const count = externalUsers.length
+        
         setUserCount(count)
         setView(count === 0 ? 'form' : 'dashboard')
       } else {

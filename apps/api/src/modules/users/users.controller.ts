@@ -11,9 +11,8 @@ export class UsersController {
     
     return {
       success: true,
-      message: 'Empleado invitado y configurado exitosamente.',
-      userId: result.user.id,
-      tempPassword: result.tempPassword // El admin puede verla una vez
+      message: 'Empleado invitado exitosamente. Se ha enviado un correo electrónico de confirmación.',
+      userId: result.user?.id,
     };
   }
 

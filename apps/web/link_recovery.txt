@@ -1,0 +1,1 @@
+https://iptnirdgmijlkdjherps.supabase.co/auth/v1/verify?token=d6f7b1b67f50b572f94f1a35613155f0f530eb39624e7b795fef0b70&type=recovery&redirect_to=http://localhost:3000/auth/callback

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/shared/components/Input'
 import { Button } from '@/shared/components/Button'
-import { UserPlus, ShieldCheck, Copy, Check } from 'lucide-react'
+import { UserPlus, ShieldCheck, Eye, Lock, Edit3 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface CreateUserFormProps {
@@ -21,11 +21,15 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
     email: '',
     role: ''
   })
+  const [permisos, setPermisos] = useState({
+    visualizacion: true,
+    lectura: true,
+    escritura: false
+  })
   
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-  const [resultData, setResultData] = useState<{ email: string, tempPassword: string, nombres: string, role: string } | null>(null)
-  const [copied, setCopied] = useState(false)
+  const [resultData, setResultData] = useState<{ email: string, nombres: string, role: string } | null>(null)
   
   const supabase = createClient()
 
@@ -62,7 +66,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, adminId: admin?.id })
+        body: JSON.stringify({ ...formData, adminId: admin?.id, permisos })
       })
 
       const result = await response.json()
@@ -73,7 +77,6 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
 
       setResultData({ 
         email: formData.email, 
-        tempPassword: result.tempPassword,
         nombres: formData.nombres,
         role: formData.role
       })
@@ -81,14 +84,6 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
       setErrorMsg(error.message || 'No se pudo conectar con el servidor.')
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const copyPassword = () => {
-    if (resultData) {
-      navigator.clipboard.writeText(resultData.tempPassword)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
     }
   }
 
@@ -103,27 +98,11 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
         <div className="w-20 h-20 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
            <ShieldCheck className="w-10 h-10 text-emerald-600" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">¡Registro Exitoso!</h2>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">¡Invitación Enviada!</h2>
         <p className="text-slate-500 text-sm mb-8 leading-relaxed max-w-md mx-auto">
-          <strong className="text-slate-700">{resultData.nombres}</strong> ha sido registrado como <strong className="text-blue-600 uppercase">{resultData.role}</strong>. 
-          Se ha enviado un correo de confirmación a <em className="text-slate-600">{resultData.email}</em>.
+          Hemos enviado un correo formal de invitación a <em className="text-slate-700 font-medium">{resultData.email}</em> para {resultData.nombres} ({resultData.role}).
+          El usuario podrá configurar su propia contraseña al aceptar la invitación.
         </p>
-
-        <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-8">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clave Temporal Generada</p>
-          <div className="flex items-center justify-center gap-4">
-            <code className="text-3xl font-mono font-bold text-blue-700 tracking-wider select-all">
-              {resultData.tempPassword}
-            </code>
-            <button 
-              onClick={copyPassword}
-              className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all shadow-sm"
-              title="Copiar"
-            >
-              {copied ? <Check className="w-5 h-5 text-emerald-500" /> : <Copy className="w-5 h-5 text-slate-400" />}
-            </button>
-          </div>
-        </div>
 
         <Button 
           fullWidth 
@@ -268,6 +247,37 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               <option value="contraloria">Contraloría</option>
               <option value="supervisor">Supervisor</option>
             </select>
+          </div>
+        </div>
+
+        {/* Separador visual */}
+        <div className="border-t border-slate-100 pt-5" />
+
+        {/* Fila 4: Permisos Granulares */}
+        <div>
+          <label className="text-sm font-semibold text-slate-700 ml-1 block mb-3">Permisos de Acceso Inmediatos</label>
+          <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+            <button 
+              type="button"
+              onClick={() => setPermisos(p => ({ ...p, visualizacion: !p.visualizacion }))}
+              className={`flex-1 h-[46px] rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all border text-sm font-semibold ${permisos.visualizacion ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200 text-slate-400 hover:border-blue-400'}`}
+            >
+              <Eye className="w-4 h-4" /> Visualización
+            </button>
+            <button 
+              type="button"
+              onClick={() => setPermisos(p => ({ ...p, lectura: !p.lectura }))}
+              className={`flex-1 h-[46px] rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all border text-sm font-semibold ${permisos.lectura ? 'bg-violet-600 border-violet-600 text-white' : 'bg-white border-slate-200 text-slate-400 hover:border-violet-400'}`}
+            >
+              <Lock className="w-4 h-4" /> Lectura
+            </button>
+            <button 
+              type="button"
+              onClick={() => setPermisos(p => ({ ...p, escritura: !p.escritura }))}
+              className={`flex-1 h-[46px] rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all border text-sm font-semibold ${permisos.escritura ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-slate-200 text-slate-400 hover:border-emerald-400'}`}
+            >
+              <Edit3 className="w-4 h-4" /> Escritura
+            </button>
           </div>
         </div>
         
