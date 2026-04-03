@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { MobileLayout } from '@/layouts/operaciones/MobileLayout'
+import { SupervisorLayout } from '@/layouts/operaciones/SupervisorLayout'
 
 async function getUser() {
   const cookieStore = await cookies()
@@ -36,7 +37,18 @@ export default async function OperacionesLayout({ children }: { children: ReactN
   }
 
   const fullName = user.user_metadata?.full_name ?? 'Operador'
+  const isSupervisor = role.toLowerCase() === 'supervisor' || role.toLowerCase() === 'contraloria'
 
+  // Arquitectura de "Layout Partido": Renderizamos diferente capa según el rol.
+  if (isSupervisor) {
+    return (
+      <SupervisorLayout fullName={fullName}>
+        {children}
+      </SupervisorLayout>
+    )
+  }
+
+  // Por defecto, si es Fiscalizador (o no tiene rol avanzado), mostramos el diseño móvil de campo
   return (
     <MobileLayout fullName={fullName} role={role}>
       {children}

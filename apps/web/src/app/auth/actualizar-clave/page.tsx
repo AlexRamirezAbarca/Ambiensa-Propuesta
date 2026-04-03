@@ -21,17 +21,41 @@ export default function ActualizarClavePage() {
   useEffect(() => {
     let isMounted = true
 
-    // Primero intentamos sacar el usuario si ya está firme
-    supabase.auth.getUser().then(({ data }) => {
-      if (data?.user && isMounted) {
-        setSessionUser({
-          email: data.user.email,
-          fullName: data.user.user_metadata?.full_name || 'Nuevo Integrante'
+    const captureHashSession = async () => {
+      // Capturar manualmente si @supabase/ssr ignora el hash de invitaciones server-side
+      if (typeof window !== 'undefined' && window.location.hash.includes('access_token=')) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const access_token = hashParams.get('access_token')
+        const refresh_token = hashParams.get('refresh_token')
+        
+        if (access_token && refresh_token) {
+          const { data } = await supabase.auth.setSession({ access_token, refresh_token })
+          if (data?.session?.user && isMounted) {
+            setSessionUser({
+              email: data.session.user.email,
+              fullName: data.session.user.user_metadata?.full_name || 'Nuevo Integrante'
+            })
+            return true // Capturado con éxito
+          }
+        }
+      }
+      return false
+    }
+
+    captureHashSession().then((captured) => {
+      if (!captured) {
+        // Fallback al flujo normal de Supabase (por si ya estamos con sesión o usamos PKCE)
+        supabase.auth.getUser().then(({ data }) => {
+          if (data?.user && isMounted) {
+            setSessionUser({
+              email: data.user.email,
+              fullName: data.user.user_metadata?.full_name || 'Nuevo Integrante'
+            })
+          }
         })
       }
     })
 
-    // El Listener atrapa si la sesión entró por un URL Hash (#access_token)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user && isMounted) {
         setSessionUser({
@@ -41,9 +65,8 @@ export default function ActualizarClavePage() {
       }
     })
 
-    // Timeout de escape: Si en 3.5 segundos sigue sin haber usuario, se asume enlace inválido
     const timeout = setTimeout(async () => {
-      if (isMounted) {
+      if (isMounted && !sessionUser) {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.user) {
           setErrorMsg('No se detectó la sesión del enlace mágico. Por favor revisa que el enlace sea el más reciente o prueba en otra pestaña.')
@@ -62,7 +85,7 @@ export default function ActualizarClavePage() {
       subscription.unsubscribe()
       clearTimeout(timeout)
     }
-  }, [router, supabase])
+  }, [supabase])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

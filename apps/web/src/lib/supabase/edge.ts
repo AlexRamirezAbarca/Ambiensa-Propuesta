@@ -24,15 +24,22 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const isDashboard = request.nextUrl.pathname.startsWith('/dashboard')
+  const isOperaciones = request.nextUrl.pathname.startsWith('/operaciones')
   const isAuthRoute = ['/login', '/register', '/forgot-password'].includes(request.nextUrl.pathname)
 
-  // Sin sesión intentando entrar al dashboard → al login
-  if (!user && isDashboard) {
+  // Sin sesión intentando entrar a ruta protegida → al login
+  if (!user && (isDashboard || isOperaciones)) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Con sesión intentando ver el login → al dashboard
+  // Con sesión intentando ver rutas de Auth (login) → redirigir según su rol
   if (user && isAuthRoute) {
+    const role = user.user_metadata?.role as string | undefined
+    const operarios = ['fiscalizador', 'supervisor', 'contraloria']
+    
+    if (role && operarios.includes(role.toLowerCase())) {
+      return NextResponse.redirect(new URL('/operaciones', request.url))
+    }
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
