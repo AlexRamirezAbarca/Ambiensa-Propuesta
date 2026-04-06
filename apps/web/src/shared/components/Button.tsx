@@ -1,12 +1,13 @@
 'use client'
 
 import { type ButtonHTMLAttributes } from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Spinner } from './Spinner'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   isLoading?: boolean
+  loadingText?: string
   fullWidth?: boolean
 }
 
@@ -14,15 +15,17 @@ export function Button({
   children,
   variant = 'primary',
   isLoading = false,
+  loadingText = 'Procesando...',
   fullWidth = false,
   className = '',
   disabled,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'relative flex items-center justify-center rounded-xl font-medium focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden'
+  const baseStyles = 'relative flex items-center justify-center rounded-xl font-medium focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden transition-all duration-300'
   
   const variants = {
     primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50',
+    secondary: 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm',
     outline: 'border border-slate-700 bg-slate-800/50 text-slate-300 hover:bg-slate-700/80 hover:text-white',
     ghost: 'text-slate-400 hover:text-white hover:bg-white/5'
   }
@@ -47,7 +50,7 @@ export function Button({
         <span className="flex items-center gap-2">
           <Spinner size={18} color="white" />
           <span className="opacity-0">{children}</span> {/* Placeholder */}
-          <span className="absolute inset-0 flex items-center justify-center">Verificando...</span>
+          <span className="absolute inset-0 flex items-center justify-center font-bold uppercase text-[10px] tracking-widest">{loadingText}</span>
         </span>
       ) : (
         <span className="relative z-10 flex items-center gap-2">{children}</span>

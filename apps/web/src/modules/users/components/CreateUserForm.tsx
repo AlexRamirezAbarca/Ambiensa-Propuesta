@@ -243,9 +243,11 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               className="w-full h-[46px] px-4 bg-white border border-slate-200 hover:border-blue-400 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium appearance-none"
             >
               <option value="" disabled>Seleccionar rol asignado</option>
+              <option value="administrador">Administrador</option>
+              <option value="supervisor">Supervisor</option>
               <option value="fiscalizador">Fiscalizador</option>
               <option value="contraloria">Contraloría</option>
-              <option value="supervisor">Supervisor</option>
+              <option value="contratista">Contratista</option>
             </select>
           </div>
         </div>

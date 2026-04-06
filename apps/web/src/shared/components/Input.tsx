@@ -8,6 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string
   fullWidth?: boolean
   variant?: 'dark' | 'light'
+  icon?: React.ReactNode
 }
 
 const themes = {
@@ -24,7 +25,7 @@ const themes = {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className = '', fullWidth = true, type = 'text', variant = 'dark', ...props }, ref) => {
+  ({ label, error, className = '', fullWidth = true, type = 'text', variant = 'light', icon, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false)
     const isPassword = type === 'password'
     const t = themes[variant]
@@ -37,14 +38,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <div className="relative w-full">
+          {icon && (
+            <div className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${t.eye} pointer-events-none`}>
+              {icon}
+            </div>
+          )}
           <input
             ref={ref}
             type={isPassword ? (showPassword ? 'text' : 'password') : type}
             className={`
-              w-full px-4 py-3 border rounded-xl text-sm
+              w-full py-3 border rounded-xl text-sm
               focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
               transition-all
               ${t.input}
+              ${icon ? 'pl-11' : 'px-4'}
               ${isPassword ? 'pr-11' : ''}
               ${error ? 'border-red-400 focus:ring-red-500/20 focus:border-red-500' : ''}
               ${className}

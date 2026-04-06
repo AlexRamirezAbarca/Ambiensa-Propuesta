@@ -1,10 +1,10 @@
 import { Users, ClipboardCheck, Building2, TrendingUp } from 'lucide-react'
 
 const metrics = [
-  { label: 'Colaboradores Activos', value: '0', icon: Users, color: 'from-blue-500 to-blue-600', bg: 'bg-blue-50', text: 'text-blue-600', note: 'Total registrados' },
-  { label: 'Fiscalizaciones', value: '0', icon: ClipboardCheck, color: 'from-violet-500 to-violet-600', bg: 'bg-violet-50', text: 'text-violet-600', note: 'En progreso' },
-  { label: 'Urbanizaciones', value: '0', icon: Building2, color: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-50', text: 'text-emerald-600', note: 'Activas' },
-  { label: 'Reportes del Mes', value: '0', icon: TrendingUp, color: 'from-orange-500 to-orange-600', bg: 'bg-orange-50', text: 'text-orange-600', note: 'Generados' },
+  { label: 'Colaboradores Activos', value: '—', icon: Users, color: 'from-blue-500 to-blue-600', bg: 'bg-blue-50', text: 'text-blue-600', note: 'Consultando...' },
+  { label: 'Fiscalizaciones', value: '—', icon: ClipboardCheck, color: 'from-violet-500 to-violet-600', bg: 'bg-violet-50', text: 'text-violet-600', note: 'Consultando...' },
+  { label: 'Urbanizaciones', value: '—', icon: Building2, color: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-50', text: 'text-emerald-600', note: 'Consultando...' },
+  { label: 'Reportes del Mes', value: '—', icon: TrendingUp, color: 'from-orange-500 to-orange-600', bg: 'bg-orange-50', text: 'text-orange-600', note: 'Consultando...' },
 ]
 
 export default function DashboardHomePage() {
@@ -35,26 +35,12 @@ export default function DashboardHomePage() {
       {/* Sección central de bienvenida */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Actividad Reciente */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-slate-800">Actividad Reciente</h2>
-            <span className="text-xs text-slate-400 bg-slate-50 px-3 py-1 rounded-full font-medium">Hoy</span>
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col items-center justify-center min-h-[200px] text-center">
+          <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+             <TrendingUp className="w-6 h-6 text-slate-300" />
           </div>
-          <div className="space-y-4">
-            {[
-              { action: 'Sistema iniciado correctamente', time: 'Ahora mismo', dot: 'bg-green-400' },
-              { action: 'Base de datos conectada a Supabase', time: 'Reciente', dot: 'bg-blue-400' },
-              { action: 'Módulo de Seguridad activado', time: 'Al iniciar', dot: 'bg-violet-400' },
-            ].map((ev, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${ev.dot}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-700 font-medium truncate">{ev.action}</p>
-                </div>
-                <span className="text-[11px] text-slate-400 flex-shrink-0">{ev.time}</span>
-              </div>
-            ))}
-          </div>
+          <h2 className="font-bold text-slate-800">Actividad del Sistema</h2>
+          <p className="text-slate-400 text-sm max-w-xs mt-1">No hay eventos recientes que mostrar en este momento.</p>
         </div>
 
         {/* Panel Info Admin */}

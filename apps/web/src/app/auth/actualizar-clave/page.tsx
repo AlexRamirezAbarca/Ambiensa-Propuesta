@@ -21,6 +21,29 @@ export default function ActualizarClavePage() {
   useEffect(() => {
     let isMounted = true
 
+    const checkHashError = () => {
+      if (typeof window !== 'undefined' && window.location.hash.includes('error=')) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const error = hashParams.get('error')
+        const errorCode = hashParams.get('error_code')
+        const errorDescription = hashParams.get('error_description')
+
+        if (errorCode === 'otp_expired' || error === 'access_denied') {
+          setErrorMsg('El enlace de seguridad ha expirado o ya fue utilizado. Por favor, solicita una nueva invitación o restablecimiento de contraseña.')
+          return true
+        }
+        
+        if (errorDescription) {
+          setErrorMsg(`Error de Autenticación: ${errorDescription.replace(/\+/g, ' ')}`)
+          return true
+        }
+      }
+      return false
+    }
+
+    const hasError = checkHashError()
+    if (hasError) return
+
     const captureHashSession = async () => {
       // Capturar manualmente si @supabase/ssr ignora el hash de invitaciones server-side
       if (typeof window !== 'undefined' && window.location.hash.includes('access_token=')) {
@@ -66,7 +89,7 @@ export default function ActualizarClavePage() {
     })
 
     const timeout = setTimeout(async () => {
-      if (isMounted && !sessionUser) {
+      if (isMounted && !sessionUser && !errorMsg) {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.user) {
           setErrorMsg('No se detectó la sesión del enlace mágico. Por favor revisa que el enlace sea el más reciente o prueba en otra pestaña.')
@@ -85,7 +108,7 @@ export default function ActualizarClavePage() {
       subscription.unsubscribe()
       clearTimeout(timeout)
     }
-  }, [supabase])
+  }, [supabase, errorMsg, sessionUser])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

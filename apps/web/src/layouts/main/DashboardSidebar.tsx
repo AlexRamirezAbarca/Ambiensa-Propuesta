@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users2, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Users2, Menu, X, Building2, ClipboardList } from 'lucide-react'
 import { AdminAvatar } from '@/shared/components/AdminAvatar'
 
 const navItems = [
@@ -18,6 +18,18 @@ const navItems = [
     href: '/dashboard/mantenimiento',
     icon: Users2,
     description: 'Gestión de equipo'
+  },
+  {
+    label: 'Proyectos',
+    href: '/dashboard/proyectos',
+    icon: Building2,
+    description: 'Urbanizaciones y Lotes'
+  },
+  {
+    label: 'Catálogo de Rubros',
+    href: '/dashboard/rubros',
+    icon: ClipboardList,
+    description: 'Actividades técnicas'
   },
 ]
 

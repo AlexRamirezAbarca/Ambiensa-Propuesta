@@ -29,20 +29,20 @@ export default async function OperacionesLayout({ children }: { children: ReactN
   }
 
   const role = user.user_metadata?.role as string
-  const validRoles = ['fiscalizador', 'supervisor', 'contraloria']
+  const validRoles = ['administrador', 'admin', 'fiscalizador', 'supervisor', 'contraloria', 'contratista']
 
-  // Protección de la ruta para roles de campo
+  // Protección de la ruta para roles autorizados
   if (!role || !validRoles.includes(role.toLowerCase())) {
     redirect('/acceso-denegado')
   }
 
   const fullName = user.user_metadata?.full_name ?? 'Operador'
-  const isSupervisor = role.toLowerCase() === 'supervisor' || role.toLowerCase() === 'contraloria'
+  const isOfficeWorker = ['administrador', 'admin', 'supervisor', 'fiscalizador', 'contraloria'].includes(role.toLowerCase())
 
-  // Arquitectura de "Layout Partido": Renderizamos diferente capa según el rol.
-  if (isSupervisor) {
+  // Arquitectura de "Layout de Oficina": Renderizamos el panel de control web
+  if (isOfficeWorker) {
     return (
-      <SupervisorLayout fullName={fullName}>
+      <SupervisorLayout fullName={fullName} role={role.toLowerCase()}>
         {children}
       </SupervisorLayout>
     )

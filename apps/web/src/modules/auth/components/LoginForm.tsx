@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/shared/components/Input'
 import { Button } from '@/shared/components/Button'
@@ -13,9 +13,35 @@ export function LoginForm() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const [showRegisterLink, setShowRegisterLink] = useState(true)
 
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const checkAdminExists = async () => {
+      // 1. Obtener los IDs de los roles de mando (más robusto)
+      const { data: rolesData } = await supabase
+        .from('roles')
+        .select('id')
+        .or('nombre.eq.administrador,nombre.eq.admin,nombre.eq.supervisor')
+
+      if (rolesData && rolesData.length > 0) {
+        const roleIds = rolesData.map(r => r.id)
+        
+        // 2. Contar si hay usuarios con esos roles
+        const { count } = await supabase
+          .from('usuarios')
+          .select('id', { count: 'exact', head: true })
+          .in('role_id', roleIds)
+
+        if (count && count > 0) {
+          setShowRegisterLink(false)
+        }
+      }
+    }
+    checkAdminExists()
+  }, [supabase])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,7 +69,7 @@ export function LoginForm() {
 
     if (data.user) {
       const role = data.user.user_metadata?.role as string
-      const operarios = ['fiscalizador', 'supervisor', 'contraloria']
+      const operarios = ['fiscalizador', 'supervisor', 'contraloria', 'administrador', 'admin']
 
       if (operarios.includes(role?.toLowerCase())) {
         router.push('/operaciones')
@@ -100,14 +126,17 @@ export function LoginForm() {
         </Button>
       </form>
 
-      <div className="mt-8 pt-6 text-center border-t border-slate-800">
-        <p className="text-sm text-slate-400">
-          ¿No tienes una cuenta?{' '}
-          <Link href="/register" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
-            Regístrate ahora
-          </Link>
-        </p>
-      </div>
+      {showRegisterLink && (
+        <div className="mt-8 pt-6 text-center border-t border-slate-800">
+          <p className="text-sm text-slate-400">
+            ¿No tienes una cuenta?{' '}
+            <Link href="/register" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+              Regístrate ahora
+            </Link>
+          </p>
+        </div>
+      )}
     </div>
   )
 }
+
