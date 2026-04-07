@@ -59,7 +59,7 @@ ON public.avances_diarios FOR SELECT USING (
   EXISTS (
     SELECT 1 FROM public.usuarios u
     JOIN public.roles r ON u.role_id = r.id
-    WHERE u.id = auth.uid() AND r.nombre IN ('admin', 'supervisor', 'contraloria')
+    WHERE u.id = auth.uid() AND r.nombre IN ('admin', 'administrador', 'supervisor', 'contraloria')
   )
 );
 

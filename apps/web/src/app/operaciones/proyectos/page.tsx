@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Search, MapPin, Building2, TrendingUp, CheckCircle2, AlertCircle, ArrowRight, HardHat } from 'lucide-react'
+import { Plus, Search, MapPin, Building2, TrendingUp, CheckCircle2, AlertCircle, ArrowRight, HardHat, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/shared/components/Button'
 import { CreateProjectModal } from '@/modules/projects/components/CreateProjectModal'
+import { DeleteProjectModal } from '@/modules/projects/components/DeleteProjectModal'
 
 export default function ProyectosPage() {
   const [proyectos, setProyectos] = useState<any[]>([])
@@ -13,6 +14,7 @@ export default function ProyectosPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [role, setRole] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [projectToDelete, setProjectToDelete] = useState<any>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -61,8 +63,8 @@ export default function ProyectosPage() {
            <p className="text-slate-400 font-medium text-sm mt-1">Supervisión integral de urbanas y frentes de obra.</p>
         </div>
         
-        {/* Solo el Supervisor puede crear proyectos */}
-        {role !== 'admin' && (
+        {/* Solo el Fiscalizador puede crear proyectos */}
+        {role === 'fiscalizador' && (
           <Button
             onClick={() => setIsCreateOpen(true)}
             className="bg-[#0f172a] hover:bg-slate-800 shadow-2xl shadow-indigo-200 h-14 px-8 rounded-2xl"
@@ -101,26 +103,26 @@ export default function ProyectosPage() {
                   <div className="w-16 h-16 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center text-slate-900 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
                      <Building2 className="w-8 h-8" />
                   </div>
-                  <div className="px-4 py-2 bg-indigo-50 rounded-xl text-indigo-600 text-[10px] font-black uppercase tracking-widest">
-                     Inmobiliario
+                  <div className="flex items-center gap-2">
+                    <div className="px-4 py-2 bg-indigo-50 rounded-xl text-indigo-600 text-[10px] font-black uppercase tracking-widest">
+                       Inmobiliario
+                    </div>
+                    {role === 'fiscalizador' && (
+                      <button 
+                        onClick={(e) => { e.preventDefault(); setProjectToDelete(p); }}
+                        className="w-8 h-8 flex items-center justify-center bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all shadow-sm"
+                        title="Eliminar Proyecto"
+                      >
+                         <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                </div>
 
                <h3 className="text-2xl font-black text-[#0f172a] mb-2 group-hover:text-indigo-600 transition-colors">{p.nombre}</h3>
-               <p className="text-xs font-bold text-slate-400 flex items-center gap-2 mb-8">
+               <p className="text-xs font-bold text-slate-400 flex items-center gap-2 mb-10">
                   <MapPin className="w-3 h-3 text-indigo-500" /> {p.ubicacion || 'Guayaquil'}
                </p>
-
-               <div className="grid grid-cols-2 gap-4 mb-10 pt-6 border-t border-slate-50">
-                  <div className="space-y-1">
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Unidades</p>
-                     <p className="text-lg font-black text-slate-800">{p.lotes_unidades?.length || 0}</p>
-                  </div>
-                  <div className="space-y-1">
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Aporte m³</p>
-                     <p className="text-lg font-black text-indigo-600">{totalVolumen.toFixed(2)}</p>
-                  </div>
-               </div>
 
                <Link href={`/operaciones/proyectos/${p.id}`} className="w-full h-14 bg-[#0f172a] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-900/10">
                   Ver Detalles <ArrowRight className="w-3 h-3" />
@@ -135,6 +137,16 @@ export default function ProyectosPage() {
         onClose={() => setIsCreateOpen(false)}
         onSuccess={() => {
           setIsCreateOpen(false)
+          window.location.reload()
+        }}
+      />
+
+      <DeleteProjectModal
+        isOpen={!!projectToDelete}
+        onClose={() => setProjectToDelete(null)}
+        proyecto={projectToDelete}
+        onSuccess={() => {
+          setProjectToDelete(null)
           window.location.reload()
         }}
       />

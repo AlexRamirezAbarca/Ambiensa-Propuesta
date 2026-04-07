@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Modal } from '@/shared/components/Modal'
 import { Input } from '@/shared/components/Input'
 import { Button } from '@/shared/components/Button'
-import { Building2, MapPin, AlignLeft, CheckCircle2 } from 'lucide-react'
+import { Building2, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface CreateProjectModalProps {
@@ -15,9 +15,7 @@ interface CreateProjectModalProps {
 
 export function CreateProjectModal({ isOpen, onClose, onSuccess }: CreateProjectModalProps) {
   const [formData, setFormData] = useState({
-    nombre: '',
-    descripcion: '',
-    ubicacion: ''
+    nombre: ''
   })
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -37,8 +35,6 @@ export function CreateProjectModal({ isOpen, onClose, onSuccess }: CreateProject
         .from('proyectos')
         .insert({
           nombre: formData.nombre,
-          descripcion: formData.descripcion,
-          ubicacion: formData.ubicacion,
           estado: true
         })
 
@@ -47,7 +43,7 @@ export function CreateProjectModal({ isOpen, onClose, onSuccess }: CreateProject
       setIsSuccess(true)
       setTimeout(() => {
         setIsSuccess(false)
-        setFormData({ nombre: '', descripcion: '', ubicacion: '' })
+        setFormData({ nombre: '' })
         onSuccess()
         onClose()
       }, 2000)
@@ -80,29 +76,6 @@ export function CreateProjectModal({ isOpen, onClose, onSuccess }: CreateProject
               icon={<Building2 className="w-4 h-4" />}
               required 
            />
-
-           <Input 
-              label="Ubicación" 
-              name="ubicacion" 
-              placeholder="Ej: Vía a Salitre, Km 12" 
-              value={formData.ubicacion} 
-              onChange={handleChange} 
-              icon={<MapPin className="w-4 h-4" />}
-           />
-
-           <div className="space-y-2">
-             <label className="text-sm font-bold text-slate-700 ml-1 flex items-center gap-2">
-               <AlignLeft className="w-4 h-4 text-slate-400" /> Descripción
-             </label>
-             <textarea 
-               name="descripcion" 
-               rows={3} 
-               value={formData.descripcion}
-               onChange={handleChange}
-               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
-               placeholder="Detalles adicionales del proyecto..."
-             />
-           </div>
 
            <div className="pt-4 flex gap-3">
              <Button type="button" variant="secondary" fullWidth onClick={onClose} disabled={isLoading}>

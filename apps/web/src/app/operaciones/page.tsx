@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { FiscalizadorDashboard } from '@/modules/operaciones/components/FiscalizadorDashboard'
+import { ContratistaDashboard } from '@/modules/operaciones/components/ContratistaDashboard'
 import { 
   HardHat, 
   CheckCircle2, 
@@ -87,7 +87,7 @@ export default function OperationsDashboard() {
 
   // Contratista → su vista de campo (la antigua del fiscalizador)
   if (role === 'contratista') {
-    return <FiscalizadorDashboard />
+    return <ContratistaDashboard />
   }
 
   const isExecutive = ['administrador', 'admin', 'contraloria', 'supervisor'].includes(role)

@@ -35,7 +35,7 @@ export async function updateSession(request: NextRequest) {
   // Con sesión intentando ver rutas de Auth (login) → redirigir según su rol
   if (user && isAuthRoute) {
     const role = user.user_metadata?.role as string | undefined
-    const operarios = ['fiscalizador', 'supervisor', 'contraloria']
+    const operarios = ['fiscalizador', 'supervisor', 'contraloria', 'contratista', 'administrador']
     
     if (role && operarios.includes(role.toLowerCase())) {
       return NextResponse.redirect(new URL('/operaciones', request.url))

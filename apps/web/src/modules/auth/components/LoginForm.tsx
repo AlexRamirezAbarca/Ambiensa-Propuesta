@@ -69,7 +69,7 @@ export function LoginForm() {
 
     if (data.user) {
       const role = data.user.user_metadata?.role as string
-      const operarios = ['fiscalizador', 'supervisor', 'contraloria', 'administrador', 'admin']
+      const operarios = ['fiscalizador', 'supervisor', 'contraloria', 'administrador', 'admin', 'contratista']
 
       if (operarios.includes(role?.toLowerCase())) {
         router.push('/operaciones')

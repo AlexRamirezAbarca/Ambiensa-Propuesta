@@ -64,7 +64,7 @@ ON public.proyectos FOR ALL USING (
   EXISTS (
     SELECT 1 FROM public.usuarios u
     JOIN public.roles r ON u.role_id = r.id
-    WHERE u.id = auth.uid() AND r.nombre IN ('admin', 'supervisor')
+    WHERE u.id = auth.uid() AND r.nombre IN ('admin', 'administrador', 'supervisor')
   )
 );
 
