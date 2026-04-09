@@ -57,7 +57,8 @@ export default function PersonalPage() {
        admin: 'bg-indigo-50 text-indigo-600 border-indigo-100',
        supervisor: 'bg-blue-50 text-blue-600 border-blue-100',
        contraloria: 'bg-rose-50 text-rose-600 border-rose-100',
-       fiscalizador: 'bg-emerald-50 text-emerald-600 border-emerald-100'
+       fiscalizador: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+       contratista: 'bg-amber-50 text-amber-600 border-amber-100'
     }
     return styles[role.toLowerCase()] || 'bg-slate-50 text-slate-600'
   }
@@ -117,7 +118,7 @@ export default function PersonalPage() {
             />
          </div>
          <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0">
-            {['todos', 'administrador', 'supervisor', 'fiscalizador', 'contraloria'].map(r => (
+            {['todos', 'administrador', 'supervisor', 'fiscalizador', 'contraloria', 'contratista'].map(r => (
                <button 
                 key={r}
                 onClick={() => setSelectedRole(r)}
