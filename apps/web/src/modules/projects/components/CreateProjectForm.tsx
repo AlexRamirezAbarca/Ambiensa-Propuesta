@@ -174,7 +174,7 @@ export function CreateProjectForm({ onProjectCreated }: CreateProjectFormProps) 
             <h3 className="font-bold text-slate-800 flex items-center gap-2">
               <Plus className="w-5 h-5 text-blue-600" /> Configuración de Lotes / Unidades
             </h3>
-            <Button type="button" variant="outline" size="sm" onClick={addLote} className="text-xs border-slate-200 text-slate-600 hover:bg-slate-50">
+            <Button type="button" variant="outline" onClick={addLote} className="text-xs border-slate-200 text-slate-600 hover:bg-slate-50">
               <Plus className="w-3 h-3 mr-1" /> Añadir Unidad
             </Button>
           </div>
@@ -182,9 +182,9 @@ export function CreateProjectForm({ onProjectCreated }: CreateProjectFormProps) 
           <div className="space-y-4">
             {lotes.map((lote, index) => (
               <motion.div layout key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 bg-slate-50 rounded-2xl relative group border border-transparent hover:border-blue-100 hover:bg-white hover:shadow-lg transition-all duration-300">
-                <Input size="sm" label="Calle" name="calle" value={lote.calle} onChange={(e) => handleLoteChange(index, e)} />
-                <Input size="sm" label="MZ" name="mz" value={lote.mz} onChange={(e) => handleLoteChange(index, e)} />
-                <Input size="sm" label="Villa" name="villa" value={lote.villa} onChange={(e) => handleLoteChange(index, e)} />
+                <Input label="Calle" name="calle" value={lote.calle} onChange={(e) => handleLoteChange(index, e)} />
+                <Input label="MZ" name="mz" value={lote.mz} onChange={(e) => handleLoteChange(index, e)} />
+                <Input label="Villa" name="villa" value={lote.villa} onChange={(e) => handleLoteChange(index, e)} />
                 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-slate-500 ml-1 uppercase tracking-wider">Fiscalizador</label>
