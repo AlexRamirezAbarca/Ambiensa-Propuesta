@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { 
-  ArrowRight, Shield, Clock, TrendingUp, CheckCircle2, 
-  ChevronRight, Menu, X, AlertTriangle, Lightbulb, 
+import {
+  ArrowRight, Shield, Clock, TrendingUp, CheckCircle2,
+  ChevronRight, Menu, X, AlertTriangle, Lightbulb,
   Briefcase, BarChart3, Globe, Zap, ArrowUpRight
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -59,7 +59,7 @@ const LandingPage = () => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
-    
+
     return () => {
       clearInterval(interval)
       subscription.unsubscribe()
@@ -86,9 +86,9 @@ const LandingPage = () => {
               <a href="#solucion" className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Solución</a>
               <a href="#ventajas" className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Ventajas</a>
               <a href="#oportunidades" className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Oportunidades</a>
-              
-              <Link 
-                href={isLoggedIn ? "/operaciones" : "/login"} 
+
+              <Link
+                href={isLoggedIn ? "/operaciones" : "/login"}
                 className="bg-blue-600 text-white px-8 py-3 rounded-2xl text-sm font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95 flex items-center gap-2 uppercase tracking-wider"
               >
                 {isLoggedIn ? "Ir al Dashboard" : "Iniciar Demo"}
@@ -115,9 +115,9 @@ const LandingPage = () => {
               transition={{ duration: 1.5 }}
               className="absolute inset-0"
             >
-              <img 
-                src={slides[currentSlide].url} 
-                alt="Ambiensa Slide" 
+              <img
+                src={slides[currentSlide].url}
+                alt="Ambiensa Slide"
                 className="w-full h-full object-cover brightness-[0.95]"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent" />
@@ -143,8 +143,8 @@ const LandingPage = () => {
               Transformamos la construcción en una ciencia de datos. Control total, transparencia absoluta y rentabilidad garantizada.
             </p>
             <div className="flex gap-4">
-              <Link 
-                href="/login" 
+              <Link
+                href="/login"
                 className="bg-slate-900 text-white px-10 py-5 rounded-3xl text-lg font-black hover:bg-blue-600 transition-all shadow-2xl flex items-center gap-3 group"
               >
                 Comenzar ahora
@@ -157,8 +157,8 @@ const LandingPage = () => {
         {/* Slide Indicators */}
         <div className="absolute bottom-12 right-12 z-20 flex gap-2">
           {slides.map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`h-1.5 transition-all duration-500 rounded-full ${i === currentSlide ? 'w-12 bg-blue-600' : 'w-4 bg-slate-300'}`}
             />
           ))}
@@ -317,8 +317,8 @@ const LandingPage = () => {
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 text-center">
           <h3 className="text-3xl font-black text-slate-900 mb-8 uppercase tracking-widest">¿Listo para el futuro de Ambiensa?</h3>
-          <Link 
-            href="/login" 
+          <Link
+            href="/login"
             className="inline-flex items-center gap-4 bg-blue-600 text-white px-16 py-6 rounded-full text-2xl font-black hover:bg-slate-900 transition-all shadow-2xl shadow-blue-200 group"
           >
             SOLICITAR ACCESO DEMO
@@ -343,7 +343,7 @@ const LandingPage = () => {
               <a href="#" className="hover:text-blue-600">Legal</a>
             </div>
             <p className="text-xs font-bold text-slate-400 italic">
-              © 2026 Ambiensa. Desarrollado para Guayaquil, Ecuador.
+              © 2026 Ambiensa. Desarrollado por Alex Ramirez Abarca, Ecuador.
             </p>
           </div>
         </div>
