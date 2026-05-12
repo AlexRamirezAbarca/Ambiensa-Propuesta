@@ -18,7 +18,8 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: 'Panel de Control', href: '/operaciones', icon: LayoutDashboard },
   { name: 'Gestión de Personal', href: '/operaciones/fiscalizadores', icon: Users, roles: ['supervisor', 'administrador'] },
-  { name: 'Gestión de Proyectos', href: '/operaciones/proyectos', icon: HardHat, roles: ['fiscalizador', 'contraloria'] }
+  { name: 'Gestión de Proyectos', href: '/operaciones/proyectos', icon: HardHat, roles: ['fiscalizador'] },
+  { name: 'Auditoría Contraloría', href: '/operaciones/contraloria', icon: ClipboardList, roles: ['contraloria'] }
 ]
 
 export function SupervisorLayout({ children, fullName, role }: { children: ReactNode, fullName: string, role: string }) {

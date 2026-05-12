@@ -25,7 +25,7 @@ export default async function OperacionesLayout({ children }: { children: ReactN
   const user = await getUser()
   
   if (!user) {
-    redirect('/login')
+    redirect('/')
   }
 
   const role = user.user_metadata?.role as string

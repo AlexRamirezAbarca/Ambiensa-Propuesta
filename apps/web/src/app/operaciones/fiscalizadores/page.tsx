@@ -14,11 +14,13 @@ import {
   MoreVertical,
   CheckCircle,
   XCircle,
-  Key
+  Key,
+  Trash2
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/shared/components/Button'
 import { CreateUserForm } from '@/modules/users/components/CreateUserForm'
+import { ConfirmModal } from '@/shared/components/ConfirmModal'
 
 export default function PersonalPage() {
   const [users, setUsers] = useState<any[]>([])
@@ -26,6 +28,15 @@ export default function PersonalPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedRole, setSelectedRole] = useState('todos')
   const [view, setView] = useState<'list' | 'form'>('list')
+  
+  // Modal state
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    userId: '',
+    title: '',
+    message: ''
+  })
+
   const supabase = createClient()
 
   const fetchUsers = async () => {
@@ -63,9 +74,37 @@ export default function PersonalPage() {
     return styles[role.toLowerCase()] || 'bg-slate-50 text-slate-600'
   }
 
+  const handleDelete = async () => {
+    const userId = modalConfig.userId
+    setIsLoading(true)
+    
+    // Intento de eliminación en cascada si hay RLS habilitado
+    const { error } = await supabase
+      .from('usuarios')
+      .delete()
+      .match({ id: userId })
+
+    if (error) {
+      alert('Error técnico de eliminación: ' + error.message)
+    } else {
+      await fetchUsers()
+    }
+    setIsLoading(false)
+  }
+
   return (
     <div className="space-y-12 animate-in fade-in transition-all">
       
+      <ConfirmModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        onConfirm={handleDelete}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type="danger"
+        confirmText="Eliminar permanentemente"
+      />
+
       {/* Header Premium */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
@@ -140,27 +179,41 @@ export default function PersonalPage() {
               return (
                 <div key={u.id} className="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-8">
-                    <button className="text-slate-200 hover:text-indigo-600 transition-colors"><MoreVertical className="w-5 h-5" /></button>
+                    <button 
+                      onClick={() => setModalConfig({
+                        isOpen: true,
+                        userId: u.id,
+                        title: 'Eliminar Integrante',
+                        message: `¿Está seguro de eliminar a ${u.nombres}? Esta acción es irreversible y el usuario perderá acceso inmediato.`
+                      })}
+                      className="text-slate-200 hover:text-red-500 transition-colors p-2"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-6 mb-8">
                     <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-indigo-600 font-black text-lg group-hover:scale-110 transition-transform">
                       {userInitials}
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border inline-block ${getRoleBadge(u.roles?.nombre)}`}>
                         {u.roles?.nombre}
                       </div>
-                      <h3 className="text-xl font-black text-[#0f172a] mt-2 truncate">{u.nombres}</h3>
+                      <h3 className="text-xl font-black text-[#0f172a] mt-2 truncate w-full" title={u.nombres}>
+                        {u.nombres}
+                      </h3>
                     </div>
                   </div>
 
                   <div className="space-y-4 mb-10 pt-4 border-t border-slate-50">
-                    <div className="flex items-center text-xs font-bold text-slate-500">
-                      <Mail className="w-4 h-4 mr-3 text-slate-200" /> {u.email}
+                    <div className="flex items-center text-xs font-bold text-slate-500 min-w-0">
+                      <Mail className="w-4 h-4 mr-3 text-slate-200 shrink-0" /> 
+                      <span className="truncate" title={u.email}>{u.email}</span>
                     </div>
-                    <div className="flex items-center text-xs font-bold text-slate-500">
-                      <Phone className="w-4 h-4 mr-3 text-slate-200" /> {u.telefono || 'Sin registro'}
+                    <div className="flex items-center text-xs font-bold text-slate-500 min-w-0">
+                      <Phone className="w-4 h-4 mr-3 text-slate-200 shrink-0" /> 
+                      <span className="truncate">{u.telefono || 'Sin registro'}</span>
                     </div>
                   </div>
 
