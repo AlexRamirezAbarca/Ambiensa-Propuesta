@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    // 1. Invitar al usuario via Auth (esto envía el correo)
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+    // 1. Intentar Invitar (Modo Profesional - Requiere Service Key)
+    let { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: { 
         full_name: nombres,
         role: role,
@@ -25,12 +25,34 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    if (authError) throw authError
+    // FALLBACK: Si falla la invitación (ej. falta la key), usamos Registro Normal (Modo Rescate)
+    if (authError) {
+      console.warn('Invitación fallida, usando Modo Rescate (signUp)...')
+      const { data: signUpData, error: signUpError } = await supabaseAdmin.auth.signUp({
+        email,
+        password: Math.random().toString(36).slice(-12), // Generamos una clave temporal aleatoria
+        options: { 
+          data: { 
+            full_name: nombres,
+            role: role,
+            cedula,
+            telefono,
+            sexo,
+            edad
+          }
+        }
+      })
+      
+      if (signUpError) throw signUpError
+      authData = { user: signUpData.user } as any
+    }
 
-    // 2. Crear el perfil en la tabla pública usuarios
+    if (!authData?.user) throw new Error('No se pudo crear el usuario en Auth.')
+
+    // 2. Crear o Actualizar el perfil en la tabla pública usuarios (UPSERT para evitar errores de duplicidad)
     const { error: profileError } = await supabaseAdmin
       .from('usuarios')
-      .insert({
+      .upsert({
         id: authData.user.id,
         nombres,
         email,
@@ -39,7 +61,8 @@ export async function POST(request: NextRequest) {
         sexo,
         edad: parseInt(edad),
         role_id: getRoleId(role),
-        estado: true
+        estado: true,
+        updated_at: new Date().toISOString()
       })
 
     if (profileError) throw profileError
