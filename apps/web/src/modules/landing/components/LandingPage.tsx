@@ -37,6 +37,12 @@ const LandingPage = () => {
   ]
 
   useEffect(() => {
+    // 1. Detección inmediata por Hash (Para invitaciones/recuperaciones)
+    if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+      router.push('/auth/actualizar-clave' + window.location.hash)
+      return
+    }
+
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession()
       setIsLoggedIn(!!data.session)
