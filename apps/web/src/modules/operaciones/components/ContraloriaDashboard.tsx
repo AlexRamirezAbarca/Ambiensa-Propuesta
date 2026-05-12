@@ -68,9 +68,14 @@ const ContraloriaDashboard = () => {
         .eq('id', jornadaId)
 
       if (error) throw error
-      fetchJornadas()
+      
+      // Limpiar selección y refrescar
+      await fetchJornadas()
+      
+      // Refresco forzado para asegurar que desaparezca de la lista en la demo
+      window.location.reload()
     } catch (err: any) {
-      alert('Error: ' + err.message)
+      alert('Error crítico de auditoría (¿Ejecutaste el script 016?): ' + (err.message || JSON.stringify(err)))
     }
   }
 
